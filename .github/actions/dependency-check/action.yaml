@@ -1,0 +1,15 @@
+name: Dependency check
+description: "Verify correct dependency version is vendored"
+
+inputs:
+  path:
+    description: "Path to the folder containing vendor/ and jsonnetfile.lock.json"
+    required: false
+    default: "./"
+
+runs:
+  using: docker
+  image: 'docker://bronzedeer/k8s-jsonnet-runner:v0.0.2'
+  args:
+    - './tests/dependency-check/jb-vendor.sh'
+    - '${{ inputs.path }}'

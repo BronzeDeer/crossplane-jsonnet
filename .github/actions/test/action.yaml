@@ -1,0 +1,17 @@
+name: Static Jsonnet Tests
+description: "Run Jsonnet tests against specific Kubernetes version"
+
+inputs:
+  k8s-version:
+    description: "Kubernetes api version to target. default: 1.21"
+    required: true
+    default: "1.21"
+
+runs:
+  using: docker
+  image: 'docker://bronzedeer/k8s-jsonnet-runner:v0.0.2'
+  env:
+    K8S_VERSION: ${{ inputs.k8s-version }}
+  args:
+    - jsonnet
+    - './tests/jsonnetunit/main.jsonnet'

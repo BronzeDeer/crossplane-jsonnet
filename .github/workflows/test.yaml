@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  dependency-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/actions/dependency-check
+
+      # verify correct test dependencies are vendored
+      - uses: ./.github/actions/dependency-check
+        with:
+          path: tests/jsonnetunit
+
+  static-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        k8s: ["1.18", "1.19", "1.20", "1.21", "1.22"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/actions/test
+        with:
+          k8s-version: ${{ matrix.k8s }}
