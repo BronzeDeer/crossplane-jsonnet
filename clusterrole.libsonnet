@@ -1,22 +1,11 @@
 local k = import "./vendor/github.com/grafana/jsonnet-libs/ksonnet-util/kausal.libsonnet";
+local util = import"./cr_util.libsonnet";
 
 local cr = k.rbac.v1.clusterRole;
 local crb = k.rbac.v1.clusterRoleBinding;
 local rule = k.rbac.v1.policyRule;
 
 local crLabel = {'rbac.crossplane.io/aggregate-to-crossplane': "true"};
-
-local bindSubject(subject) = {
-  subjects: [{
-    kind: subject.kind,
-    name: subject.metadata.name,
-    namespace: subject.metadata.namespace,
-  }]
-};
-
-local bindSubjectMixin(subject) = {
-  subjects+: bindSubject(subject).subjects
-};
 
 {
 
@@ -56,7 +45,7 @@ local bindSubjectMixin(subject) = {
 
   clusterRoleBinding: crb.new(self._config.name)
   + crb.bindRole(self.clusterRole)
-  + bindSubject(self.serviceAccount),
+  + util.bindSubject(self.serviceAccount),
 
   manifests+:: [
     self.clusterRole,
